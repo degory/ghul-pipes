@@ -3,6 +3,12 @@
 name: CI/CD
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number'
+        required: true
+
   pull_request:
   push:
     branches:
@@ -16,7 +22,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 1
     outputs:
-      number: ${{ steps.mangle_version_number.outputs.version }}
+      number: ${{ steps.pick_version_number.outputs.version }}
 
     steps:
     - uses: actions/checkout@v2
@@ -31,18 +37,38 @@ jobs:
         RELEASE_BRANCHES: main,master
         PRERELEASE_SUFFIX: pre
 
-    - name: Fail if version number is not valid
-      if: ${{ steps.create_version_number.outputs.new_tag == 'v0.0.0' || steps.create_version_number.outputs.new_tag == '' }}
-      run: exit 1
+    - name: Pick version number
+      id: pick_version_number
+      run: |
+        VALID_VERSION_REGEX="v[0-9]+\.[0-9]+\.[0-9](-[A-Za-z0-9]+)?$"
 
-    - name: Mangle version number
-      id: mangle_version_number
-      run: echo "::set-output name=version::${VERSION/-pre\./-pre}"
+        if [ ! -z "${MANUAL_VERSION}" ] ; then
+          echo "User supplied version: ${MANUAL_VERSION}"
+
+          VERSION="${MANUAL_VERSION}"
+        elif [ ! -z "${TAG_VERSION}" ] ; then
+          echo "Tag bump generated version: ${TAG_VERSION}"
+
+          VERSION="${TAG_VERSION/-pre\./-pre}"
+        else
+          echo "Neither manual or tag version set"
+          exit 1
+        fi
+
+        if [[ ${VERSION} =~ ${VALID_VERSION_REGEX} ]] && [ "${VERSION}" != "v0.0.0" ] ; then
+          echo "Version number is valid: ${VERSION}"
+          echo "::set-output name=version::${VERSION}"
+        else
+          echo "Version number is not valid ${VERSION}"
+          exit 1
+        fi
+
       env:
-        VERSION: ${{ steps.create_version_number.outputs.new_tag }}         
+        TAG_VERSION: ${{ steps.create_version_number.outputs.new_tag }}
+        MANUAL_VERSION: ${{ github.event.inputs.version }}
 
     - name: Echo version number
-      run: echo ${{ steps.mangle_version_number.outputs.version }}
+      run: echo ${{ steps.pick_version_number.outputs.version }}
 
   build:
     name: Build .NET executable
@@ -68,13 +94,12 @@ jobs:
         path: ghul-pipes/nupkg
 
     - name: Publish package to GitHub
-      # if: ${{ github.event_name == 'push' }}
       run: dotnet nuget push ./ghul-pipes/nupkg/*.nupkg -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/degory/index.json --skip-duplicate --no-symbols true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish package to NuGet
-      if: ${{ github.event_name == 'push' }}
+      if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
       run: dotnet nuget push ./ghul-pipes/nupkg/*.nupkg -k ${NUGET_TOKEN} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols true
       env:
         NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
