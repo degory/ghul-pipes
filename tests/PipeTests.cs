@@ -153,5 +153,73 @@ namespace Tests
                 .Equal(new [] { "1-first-second", "2-first-second", "3-first-second", "4-first-second", "5-first-second", "6-first-second" });
         }
 
+        [TestMethod]
+        public void Sort_NoComparer_SortsInDefaultOrder()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            pipe
+                .Sort()
+                .Should()
+                .Equal(new [] { 1, 2, 3, 4, 5, 6 });
+        }
+
+        [TestMethod]
+        public void Sort_GivenComparer_SortsInComparerOrder()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            pipe
+                .Sort(new ReverseIntComparer())
+                .Should()
+                .Equal(new [] { 6, 5, 4, 3, 2, 1 });
+        }
+
+        [TestMethod]
+        public void Sort_GivenCompareFunction_SortsInCompareFunctionOrder()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            pipe
+                .Sort((int x, int y) => y - x)
+                .Should()
+                .Equal(new [] { 6, 5, 4, 3, 2, 1 });
+        }
+
+        [TestMethod]
+        public void Sort_CalledTwice_SortsInLastComparerOrder()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            pipe
+                .Sort()
+                .Sort(new ReverseIntComparer())
+                .Should()
+                .Equal(new [] { 6, 5, 4, 3, 2, 1 });
+        }
+
+        [TestMethod]
+        public void Sort_EnumeratedTwice_ReturnsSameResultBothTimes()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            var sorted = 
+                pipe
+                    .Sort(new ReverseIntComparer());
+
+            sorted.Collect();
+
+            sorted
+                .Should()
+                .Equal(new [] { 6, 5, 4, 3, 2, 1 });            
+        }
+
+        class ReverseIntComparer: System.Collections.Generic.IComparer<int>
+        {
+            public int Compare(int x, int y)
+            {
+                return y - x;
+            }
+        }
     }
 }

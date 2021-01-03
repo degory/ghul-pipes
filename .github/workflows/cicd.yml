@@ -49,7 +49,7 @@ jobs:
         elif [ ! -z "${TAG_VERSION}" ] ; then
           echo "Tag bump generated version: ${TAG_VERSION}"
 
-          VERSION="${TAG_VERSION/-pre\./-pre}"
+          VERSION="${TAG_VERSION}"
         else
           echo "Neither manual or tag version set"
           exit 1
