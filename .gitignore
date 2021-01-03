@@ -2,3 +2,4 @@
 **/obj/*
 **/nupkg/*
 tests/TestResults/
+output.txt

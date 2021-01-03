@@ -99,6 +99,24 @@ namespace Pipes
             throw new System.InvalidOperationException("no element found");
         }
 
+        public virtual Pipe<T> Sort() {
+            var list = CollectList();
+
+            list.Sort();
+
+            return Pipe.From(list);
+        }
+
+        public virtual Pipe<T> Sort(IComparer<T> comparer) {
+            var list = CollectList();
+
+            list.Sort(comparer);
+
+            return Pipe.From(list);
+        }
+
+        public virtual Pipe<T> Sort(Func<T,T,int> compare) => Sort(new FunctionComparer<T>(compare));
+
         public virtual string Join(string separator) {
             var result = new System.Text.StringBuilder();
             var seen_any = false;
@@ -116,11 +134,26 @@ namespace Pipes
             return result.ToString();
         }
 
+        public virtual string Join() => Join(",");
+
+        #region function comparer
+        private class FunctionComparer<U>: IComparer<U> {
+            private Func<U,U,int> comparer;
+
+            public FunctionComparer(Func<U,U,int> comparer) {
+                this.comparer = comparer;
+            }
+
+            public int Compare(U x, U y) => comparer(x, y);
+        }
+        #endregion
+
         #region boilerplate
         public IEnumerator<T> GetEnumerator() => this;
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 
+        // ghūl doesn't have abstract classes:
         public virtual bool MoveNext() => throw new NotImplementedException();
         public virtual T Current { get => throw new NotImplementedException(); }
 
