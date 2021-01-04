@@ -214,6 +214,21 @@ namespace Tests
                 .Equal(new [] { 6, 5, 4, 3, 2, 1 });            
         }
 
+        [TestMethod]
+        public void Join_CalledTwice_JoinsAllElements()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            pipe
+                .Join();
+
+            pipe
+                .Join(", ")
+                .Should()
+                .Be("2, 1, 4, 3, 6, 5");
+        }
+
+
         class ReverseIntComparer: System.Collections.Generic.IComparer<int>
         {
             public int Compare(int x, int y)

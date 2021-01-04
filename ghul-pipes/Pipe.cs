@@ -104,6 +104,8 @@ namespace Pipes
 
             list.Sort();
 
+            Reset();
+
             return Pipe.From(list);
         }
 
@@ -111,6 +113,8 @@ namespace Pipes
             var list = CollectList();
 
             list.Sort(comparer);
+
+            Reset();
 
             return Pipe.From(list);
         }
@@ -130,6 +134,8 @@ namespace Pipes
 
                 seen_any = true;
             }
+
+            Reset();
 
             return result.ToString();
         }
