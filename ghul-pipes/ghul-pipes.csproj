@@ -8,7 +8,7 @@
     <PackageId>ghul.pipes</PackageId>
     <Authors>degory</Authors>
     <Company>ghul.io</Company>
-    <Version>0.0.4-alpha.5</Version>
+    <Version>0.0.5-alpha.1</Version>
 
     <PackageOutputPath>./nupkg</PackageOutputPath>  
     <RepositoryUrl>https://github.com/degory/ghul-pipes</RepositoryUrl>

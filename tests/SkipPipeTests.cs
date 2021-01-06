@@ -120,14 +120,12 @@ namespace Tests
             var pipe = Pipe.From(new [] {3, 4, 5, 1, 2, 1, 2, 3, 4, 5});
 
             pipe
-                .Skip(7);
-
-            // expect pipe reset
+                .Skip(7)
+                .Collect();
 
             pipe
-                .Skip(6);
-
-            // expect pipe reset - skipping 5 elements still leaves 5 elements to consume:
+                .Skip(6)
+                .Collect();
 
             pipe
                 .Skip(5)
