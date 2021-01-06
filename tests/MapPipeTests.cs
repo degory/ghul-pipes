@@ -32,5 +32,17 @@ namespace Tests
                 .Should()
                 .Equal(new [] {6, 8, 2, 10, 4, 6, 2, 8, 10});
         }
+
+        [TestMethod]
+        public void Map_CalledTwice_AppliesBothFunctionsToEveryElementInCorrectOrder()
+        {
+            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6});
+
+            pipe
+                .Map(i => i + "-first")
+                .Map(i => i + "-second")
+                .Should()
+                .Equal(new [] { "1-first-second", "2-first-second", "3-first-second", "4-first-second", "5-first-second", "6-first-second" });
+        }
     }
 }

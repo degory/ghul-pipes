@@ -40,6 +40,9 @@ namespace Pipes
         public Pipe<T> Take(int takeCount) => 
             new TakePipe<T>(GetEnumerator(), takeCount);
 
+        public Pipe<T> Cat(IEnumerable<T> right) =>
+            new CatPipe<T>(GetEnumerator(), right.GetEnumerator());
+
         public IReadOnlyList<T> Collect() => CollectList();
 
         public T[] CollectArray() => CollectList().ToArray();
@@ -121,6 +124,7 @@ namespace Pipes
 
         public virtual Pipe<T> Sort(Func<T,T,int> compare) => Sort(new FunctionComparer<T>(compare));
 
+        // Deprecated - reserve 'Join' for joining two pipes on a key:
         public virtual string Join(string separator) {
             var result = new System.Text.StringBuilder();
             var seen_any = false;
@@ -140,7 +144,29 @@ namespace Pipes
             return result.ToString();
         }
 
-        public virtual string Join() => Join(",");
+        // Deprecated - reserve 'Join' for joining two pipes on a key:
+        public virtual string Join() => Join(", ");
+
+        public virtual string ToString(string separator) {
+            var result = new System.Text.StringBuilder();
+            var seen_any = false;
+
+            while(MoveNext()) {
+                if (seen_any) {
+                    result.Append(separator);
+                }
+
+                result.Append(Current);
+
+                seen_any = true;
+            }
+
+            Reset();
+
+            return result.ToString();
+        }
+
+        public override string ToString() => ToString(", ");
 
         #region function comparer
         private class FunctionComparer<U>: IComparer<U> {

@@ -57,6 +57,19 @@ namespace Tests
         }
 
         [TestMethod]
+        public void Filter_CalledTwice_ReturnsOnlyElementsThatMatchBothPredicates()
+        {
+            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
+
+            pipe
+                .Filter(i => i > 3 && i < 9)
+                .Filter(i => (i & 1) == 0)
+                .Should()
+                .Equal(new [] { 4, 6, 8 });
+        }
+
+
+        [TestMethod]
         public void Count_AlwaysTruePredicate_ReturnsElementCount()
         {
             var input = new [] {"a", "b", "c", "d"};
