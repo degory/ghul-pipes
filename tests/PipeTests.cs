@@ -10,150 +10,6 @@ namespace Tests
     public class PipeShould
     {
         [TestMethod]
-        public void Pipe_SkipThenFirst_ReturnsCorrectElement()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Skip(5)
-                .First()
-                .Should()
-                .Be(6);
-        }
-
-        [TestMethod]
-        public void Pipe_TakeThenFirst_ReturnsFirstElement()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Take(5)
-                .First()
-                .Should()
-                .Be(1);
-        }
-
-        [TestMethod]
-        public void Pipe_SkipThenFilter_ReturnsFilteredTailSequence()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Skip(5)
-                .Filter(i => (i & 1) == 0)
-                .Should()
-                .Equal(new [] { 6, 8, 10 });
-        }
-
-        [TestMethod]
-        public void Pipe_FilterThenSkip_ReturnsFilteredTailSequence()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Filter(i => (i & 1) == 0)
-                .Skip(1)
-                .Should()
-                .Equal(new [] { 4, 6, 8, 10 });
-        }
-
-        [TestMethod]
-        public void Pipe_TakeThenFilter_ReturnsFilteredHeadSequence()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Take(5)
-                .Filter(i => (i & 1) == 0)
-                .Should()
-                .Equal(new [] { 2, 4 });
-        }
-
-        [TestMethod]
-        public void Pipe_FilterThenTake_ReturnsFilteredHeadSequence()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Filter(i => (i & 1) == 0)
-                .Take(3)
-                .Should()
-                .Equal(new [] { 2, 4, 6 });
-        }
-
-        [TestMethod]
-        public void Pipe_SkipThenMap_ReturnsMappedTailSequence()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Skip(5)
-                .Map(i => "X" + i)
-                .Should()
-                .Equal(new [] { "X6", "X7", "X8", "X9", "X10" });
-        }
-
-        [TestMethod]
-        public void Pipe_MapThenSkip_ReturnsMappedTailSequence()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Map(i => "X" + i)
-                .Skip(5)
-                .Should()
-                .Equal(new [] { "X6", "X7", "X8", "X9", "X10" });
-        }
-
-        [TestMethod]
-        public void Pipe_TakeThenMap_ReturnsMappedHeadSequence()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Take(4)
-                .Map(i => "X" + i)
-                .Should()
-                .Equal(new [] { "X1", "X2", "X3", "X4" });
-        }
-
-        [TestMethod]
-        public void Pipe_MapThenTake_ReturnsMappedHeadSequence()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Map(i => "X" + i)
-                .Take(6)
-                .Should()
-                .Equal(new [] { "X1", "X2", "X3", "X4", "X5", "X6" });
-        }
-
-        [TestMethod]
-        public void Pipe_FilterThenFilter_ReturnsOnlyElementsThatMatchBothPredicates()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
-
-            pipe
-                .Filter(i => i > 3 && i < 9)
-                .Filter(i => (i & 1) == 0)
-                .Should()
-                .Equal(new [] { 4, 6, 8 });
-        }
-
-        [TestMethod]
-        public void Pipe_MapThenMap_AppliesBothFunctionsToEveryElementInCorrectOrder()
-        {
-            var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6});
-
-            pipe
-                .Map(i => i + "-first")
-                .Map(i => i + "-second")
-                .Should()
-                .Equal(new [] { "1-first-second", "2-first-second", "3-first-second", "4-first-second", "5-first-second", "6-first-second" });
-        }
-
-        [TestMethod]
         public void Sort_NoComparer_SortsInDefaultOrder()
         {
             var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
@@ -215,19 +71,40 @@ namespace Tests
         }
 
         [TestMethod]
-        public void Join_CalledTwice_JoinsAllElements()
+        public void ToString_WithNoSeparatorArgument_ReturnsStringRepresentationOfAllElementsSeparatedWithACommaAndSpace()
         {
             var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
 
             pipe
-                .Join();
-
-            pipe
-                .Join(", ")
+                .ToString()
                 .Should()
                 .Be("2, 1, 4, 3, 6, 5");
         }
 
+        [TestMethod]
+        public void ToString_WithSeparatorArgument_ReturnsStringRepresentationOfAllElementsSeparatedWithThatSeparator()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            pipe
+                .ToString("///")
+                .Should()
+                .Be("2///1///4///3///6///5");
+        }
+
+        [TestMethod]
+        public void ToString_CalledTwice_ReturnsStringRepresentationOfAllElements()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            pipe
+                .ToString();
+
+            pipe
+                .ToString("\t")
+                .Should()
+                .Be("2\t1\t4\t3\t6\t5");
+        }
 
         class ReverseIntComparer: System.Collections.Generic.IComparer<int>
         {
