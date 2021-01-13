@@ -43,6 +43,35 @@ namespace Pipes
         public Pipe<T> Cat(IEnumerable<T> right) =>
             new CatPipe<T>(GetEnumerator(), right.GetEnumerator());
 
+        public Pipe<IndexedValue<T>> Index() =>
+            new IndexPipe<T>(GetEnumerator());
+
+        public Pipe<(T,T2)> Zip<T2>(IEnumerable<T2> other) =>
+            new ZipPipe<T,T2>(GetEnumerator(), other.GetEnumerator());
+
+        public Pipe<TOut> Zip<T2,TOut>(IEnumerable<T2> other, Func<T,T2,TOut> mapper) =>
+            new ZipMapPipe<T,T2,TOut>(GetEnumerator(), other.GetEnumerator(), mapper);
+
+        public TRunning Reduce<TRunning> (TRunning seed, Func<TRunning,T,TRunning> accumulator) {
+            TRunning running = seed;
+
+            foreach (var element in this) {
+                running = accumulator(running, element);
+            }
+
+            return running;
+        }
+
+        public TOut Reduce<TRunning,TOut> (TRunning seed, Func<TRunning,T,TRunning> accumulator, Func<TRunning,TOut> mapper) {
+            TRunning running = seed;
+
+            foreach (var element in this) {
+                running = accumulator(running, element);
+            }
+
+            return mapper(running);            
+        }
+
         public IReadOnlyList<T> Collect() => CollectList();
 
         public T[] CollectArray() => CollectList().ToArray();
