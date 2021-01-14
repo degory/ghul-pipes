@@ -1,0 +1,19 @@
+namespace Pipes is
+    use Collections.Iterator;
+
+    class SKIP_PIPE[T]: FilterPipeBase[T] is
+        _skip_count: int;
+
+        init(iterator: Iterator[T], skip_count: int) is
+            super.init(iterator);
+
+            _skip_count = skip_count;
+        si
+
+        have_moved() is
+            _skip_count = _skip_count - 1;
+        si
+        
+        should_include() -> bool => _skip_count < 0;
+    si
+si

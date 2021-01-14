@@ -1,0 +1,198 @@
+namespace Pipes is
+    use System.Text.StringBuilder;
+
+    use Collections.IComparer`1;
+    use Collections.Bag;
+    use Collections.Iterable;
+    use Collections.Iterator;
+    use Collections.List;
+    use Collections.LIST;
+
+    @IL.name("$Entry")
+    class Entry is
+        entry() static is
+            @IL.entrypoint()
+            
+            return;
+        si
+    si
+
+    class Pipe is
+        from[T](source: Iterable[T]) -> Pipe`1[T] static is
+            if isa Pipe`1[T](source) then
+                return cast Pipe`1[T](source);
+            fi
+        si        
+    si
+
+    class Pipe`1[T]: Iterable[T], Iterator[T] is
+        _source: source: Iterable[T];
+
+        iterator: Iterator[T] => self;
+        current: T is            
+        si
+
+        init(source: Iterable[T]) is
+            _source = source;
+        si
+
+        move_next() -> bool;
+        reset();
+
+        filter(predicate: T -> bool) -> Pipe`1[T] =>
+            new FILTER_PIPE[T](iterator, predicate);
+
+        skip(skip_count: int) -> Pipe`1[T] =>
+            new SKIP_PIPE[T](iterator, skip_count);
+
+        take(take_count: int) -> Pipe`1[T] =>
+            new TAKE_PIPE[T](iterator, take_count);
+
+        cat(second: Iterable[T]) -> Pipe`1[T] =>
+            new CAT_PIPE[T](iterator, second.iterator);
+
+        index() -> Pipe`1[IndexedValue`1[T]] =>
+            new INDEX_PIPE[T](iterator);
+
+        zip[TOther](other: Iterable[TOther]) -> Pipe`1[(T,TOther)] =>
+            new ZIP_PIPE[T,TOther](iterator, other.iterator);
+
+        zip[TOther,TOut](other: Iterable[TOther], mapper: (T,TOther) -> TOut) -> Pipe`1[TOut] =>
+            new ZIP_PIPE[T,TOther](iterator, other.iterator);
+
+        // reduce[TRunning](seed: TRunning, accumulator: (TRunning,T) -> TRunning) -> TRunning is
+        //     let running = seed;
+
+        //     for element in iterator do
+        //         running = accumulator(running, element);
+        //     od
+
+        //     return running;
+        // si
+
+        // reduce[TRunning,TOut](
+        //     seed: TRunning,
+        //     accumulator: (TRunning,T) -> TRunning,
+        //     mapper: TRunning -> TOut
+        // )
+        // is
+        //     let running = seed;
+
+        //     for element in iterator do
+        //         running = accumulator(running, element);
+        //     od
+
+        //     return mapper(running);
+        // si
+
+        collect() -> List[T] => collect_list();
+
+        collect_array() -> T[] => collect_list().to_array();
+
+        collect_list() -> LIST[T] is
+            let result = new LIST[T]();
+            
+            while move_next() do
+                result.add(current);                
+            od
+            
+            reset();
+
+            return result;            
+        si
+
+        count() -> int is
+            if isa Bag[T](_source) then
+                return cast Bag[T](_source).count;
+            fi
+
+            let count = 0;
+
+            while move_next() do
+                count = count + 1;
+            od
+            
+            return count;
+        si
+
+        first() -> T is
+            let result: T;
+
+            if move_next() then
+                result = current;
+
+                reset();
+            fi
+
+            return result;
+        si
+        
+        only() -> T is
+            let result: T;
+
+            if move_next() then
+                result = current;
+
+                reset();
+
+                return result;
+            fi
+
+            throw new System.InvalidOperationException("no element found");
+        si
+
+        sort(comparer: Collections.IComparer`1[T]) -> Pipe`1[T] is
+            let list = collect_list();
+
+            list.sort(comparer);
+
+            reset();
+
+            return list |;
+        si
+        
+        sort(compare: (T,T) -> int) -> Pipe`1[T] => 
+            sort(new FUNCTION_COMPARER[T](compare));
+
+        append_to(into: StringBuilder, separator: string) -> StringBuilder is
+            let seen_any = false;
+            
+            while move_next() do
+                if seen_any then
+                    into.append(separator);
+                fi
+
+                into.append(current);
+
+                seen_any = true;
+            od
+
+            reset();
+
+            return into;            
+        si
+        
+        append_to(into: StringBuilder) -> StringBuilder =>
+            append_to(into, ", ");
+
+        to_string(separator: string) -> string is
+            let result = new StringBuilder();
+
+            append_to(result, separator);
+
+            return result.to_string();
+        si
+        
+        to_string() -> string => to_string(", ");
+    si
+    
+    class FUNCTION_COMPARER[T]: IComparer`1[T] is
+        _comparer: (T,T) -> int;
+
+        init(comparer: (T,T) -> int) is
+            _comparer = comparer;
+        si
+
+        compare(x: T, y: T) -> int => _comparer(x, y);
+    si
+si

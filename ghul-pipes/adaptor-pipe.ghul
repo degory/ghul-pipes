@@ -1,0 +1,30 @@
+namespace Pipes is
+    use Collections.Iterable;
+    use Collections.Iterator;
+
+    class ADAPTOR_PIPE[T]: Pipe`1[T] is
+        _iterator: Iterator[T];
+
+        current: T => _iterator.current;
+
+        init(iterable: Iterable[T]) is
+            super.init(iterable);
+
+            _iterator = iterable.iterator;
+        si
+
+        move_next() -> bool is
+            let result = _iterator.move_next();
+
+            if !result then
+                reset();
+            fi
+
+            return result;            
+        si
+        
+        reset() is
+            _iterator.reset();
+        si        
+    si
+si

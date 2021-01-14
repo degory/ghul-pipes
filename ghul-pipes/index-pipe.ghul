@@ -1,0 +1,45 @@
+namespace Pipes is
+    use Collections.Iterator;
+
+    struct IndexedValue`1[T] is
+        index: int;
+        value: T;
+
+        init(index: int, value: T) is
+            self.index = index;
+            self.value = value;
+        si         
+    si
+    
+    class INDEX_PIPE[T]: Pipe`1[IndexedValue`1[T]] is
+        _index: int;
+        _iterator: Iterator[T];
+
+        current: IndexedValue`1[T] => new IndexedValue`1[T](_index, _iterator.current);
+
+        init(iterator: Iterator[T]) is
+            super.init(null);
+
+            _index = -1;
+        si
+
+        move_next() -> bool is
+            if _iterator.move_next() then
+                _index = _index + 1;
+
+                return true;
+            fi
+
+            reset();
+
+            return false;
+        si
+
+        reset() is
+            _index = -1;
+            _iterator.reset();
+        si
+        
+        // FIXME: compiler provides an empty dispose method which prevents us overriding it here 
+    si
+si

@@ -1,0 +1,57 @@
+namespace Pipes is
+    use Collections.Iterator;
+
+    class CAT_PIPE[T]: Pipe`1[T] is
+        _first: Iterator[T];
+        _second: Iterator[T];
+
+        _take_from_first: bool;
+
+        current: T is
+            if _take_from_first then
+                return _first.current;
+            else
+                return _second.current;
+            fi
+        si
+
+        init(first: Iterator[T], second: Iterator[T]) is
+            super.init(null);
+
+            _first = first;
+            _second = second;
+
+            _take_from_first = true;
+        si
+
+        move_next() -> bool is
+            if _take_from_first then
+                _take_from_first = _first.move_next();
+
+                if _take_from_first then
+                    return true;
+                fi
+                
+                _first.reset();
+            fi
+            
+            let result = _second.move_next();
+
+            if result then
+                return true;
+            fi
+
+            _take_from_first = true;
+            _second.reset();
+
+            return false;
+        si
+
+        reset() is
+            _first.reset();
+            _second.reset();
+        si
+        
+        // FIXME: compiler provides an empty dispose method which prevents us overriding it here 
+    si
+si

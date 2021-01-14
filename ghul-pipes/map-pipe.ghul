@@ -1,0 +1,33 @@
+namespace Pipes is
+    use Collections.Iterator;
+
+    class MAP_PIPE[TFrom,TTo]: Pipe`1[TTo] is
+        _iterator: Iterator[TFrom];
+        _mapper: TFrom -> TTo;
+
+        current: TTo;
+
+        init(iterator: Iterator[TFrom]) is
+            super.init(null);
+
+            _iterator = iterator;
+        si
+
+        move_next() -> bool is
+            if _iterator.move_next() then
+                current = _mapper(_iterator.current);
+                return true;
+            fi
+
+            _iterator.reset();
+
+            return false;
+        si
+
+        reset() is
+            _iterator.reset();
+        si
+        
+        // FIXME: compiler provides an empty dispose method which prevents us overriding it here 
+    si
+si

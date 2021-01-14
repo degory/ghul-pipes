@@ -1,0 +1,37 @@
+namespace Pipes is
+    use Collections.Iterator;
+
+    class ZIP_MAP_PIPE[TLeft,TRight,TTo]: Pipe`1[TTo] is
+        _left: Iterator[TLeft];
+        _right: Iterator[TRight];
+        _mapper: (TLeft,TRight) -> TTo;
+
+        current: TTo;
+
+        init(left: Iterator[TLeft], right: Iterator[TRight]) is
+            super.init(null);
+
+            _left = left;
+            _right = right;
+        si
+
+        move_next() -> bool is
+            if _left.move_next() /\ _right.move_next() then
+                current = _mapper(_left.current, _right.current);
+
+                return true;
+            fi
+
+            reset();
+
+            return false;
+        si
+
+        reset() is
+            _left.reset();
+            _right.reset();
+        si
+        
+        // FIXME: compiler provides an empty dispose method which prevents us overriding it here 
+    si
+si

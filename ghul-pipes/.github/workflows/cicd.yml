@@ -1,0 +1,159 @@
+# CI/CD pipeline. 
+
+name: CI/CD
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "main"
+
+env:
+  CI: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+
+jobs:
+  version:
+    name: Create a version number
+    runs-on: ubuntu-20.04
+    timeout-minutes: 1
+    outputs:
+      tag: ${{ steps.pick_version.outputs.tag }}
+      package: ${{ steps.pick_version.outputs.package }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Create version number
+      id: create_version_number
+      uses: anothrNick/github-tag-action@1.33.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WITH_V: true
+        DEFAULT_BUMP: patch
+        RELEASE_BRANCHES: main,master
+
+    - name: Pick version
+      id: pick_version
+      run: |
+        VALID_VERSION_REGEX="^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+\.[0-9]+)?$"
+
+        if [ ! -z "${MANUAL_VERSION}" ] ; then
+          echo "User supplied version: ${MANUAL_VERSION}"
+
+          VERSION="${MANUAL_VERSION}"
+        elif [ ! -z "${TAG_VERSION}" ] ; then
+          echo "Tag bump generated version: ${TAG_VERSION}"
+
+          VERSION="${TAG_VERSION}"
+        else
+          echo "Neither manual or tag version set"
+          exit 1
+        fi
+
+        if [[ ${VERSION} =~ ${VALID_VERSION_REGEX} ]] && [ "${VERSION}" != "v0.0.0" ] ; then
+          echo "Version number is valid: ${VERSION}"
+          echo "::set-output name=tag::${VERSION}"
+          echo "::set-output name=package::${VERSION:1}"
+        else
+          echo "Version number is not valid ${VERSION}"
+          exit 1
+        fi
+
+      env:
+        TAG_VERSION: ${{ steps.create_version_number.outputs.new_tag }}
+        MANUAL_VERSION: ${{ github.event.inputs.version }}        
+
+    - name: Echo version numbers
+      run: |
+        echo "tag version: ${{ steps.pick_version.outputs.tag }}"
+        echo "package version: ${{ steps.pick_version.outputs.package }}"
+
+  build:
+    name: Build .NET executable
+    needs: [version]
+    runs-on: ubuntu-20.04
+
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:5.0
+
+    timeout-minutes: 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Add .NET tools to PATH
+      run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
+
+    - name: Install ghūl compiler
+      run: dotnet tool install --global ghul.compiler
+
+    - name: Show compiler version
+      run: ghul-compiler
+                    
+    - name: Publish
+      run: dotnet publish -p:Version=${PACKAGE_VERSION} -consoleloggerparameters:NoSummary
+      env:
+        PACKAGE_VERSION: ${{ needs.version.outputs.package }}
+
+    - name: Upload .NET executable
+      uses: actions/upload-artifact@v2
+      with:
+        name: executable-dotnet
+        path: bin/Debug/net5.0/publish
+
+  test:
+    name: Test .NET executable under .NET Core
+    needs: build
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/dotnet/core/sdk:3.1
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Download .NET executable
+      uses: actions/download-artifact@v2
+      with:
+        name: executable-dotnet
+        path: .
+
+    - name: Run
+      run: ./ghul-pipes
+      
+  create-draft-release:
+    name: Create draft release
+    if: ${{ github.event_name	== 'push' }}
+    needs: [test-dotnet]
+    runs-on: "ubuntu-latest"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Download version number
+      uses: actions/download-artifact@v2
+      with:
+        name: version
+        path: .
+
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ needs.version.outputs.tag }}
+        release_name: ${{ needs.version.outputs.tag }}
+        draft: true
+
+    - name: Upload .NET executable asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./publish
+        asset_name: publish
+
