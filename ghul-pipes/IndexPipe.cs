@@ -18,6 +18,8 @@ namespace Pipes
             index = Index;
             value = Value;
         }
+
+        public override string ToString() => "(" + Index + "," + Value + ")";
     }
 
     public class IndexPipe<T>: Pipe<IndexedValue<T>>

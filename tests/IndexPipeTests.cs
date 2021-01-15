@@ -34,5 +34,13 @@ namespace Tests
                 .Should()
                 .Equal(new [] {ivs(0, "3"), ivs(1, "4"), ivs(2, "1"), ivs(3, "5"), ivs(4, "2"), ivs(5, "3"), ivs(6, "1"), ivs(7, "4"), ivs(8, "5")});
         }
+
+        [TestMethod]
+        public void IndexedValue_ToString_ReturnsIndexAndValueInParentheses() {
+            var indexedValue = new IndexedValue<string>(1234,"ABCD");
+
+            // TODO: could mock and verify it actually calls ToString on its Value property
+            indexedValue.ToString().Should().Be("(1234,ABCD)");
+        }
     }
 }
