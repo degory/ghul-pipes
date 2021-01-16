@@ -20,7 +20,7 @@ namespace Tests
                 .Skip(5)
                 .First()
                 .Should()
-                .Be(6);
+                .Be(Maybe.From(6));
         }
 
         [TestMethod]
@@ -32,7 +32,71 @@ namespace Tests
                 .Take(5)
                 .First()
                 .Should()
-                .Be(1);
+                .Be(Maybe.From(1));
+        }
+
+        [TestMethod]
+        public void Pipe_FirstEmptySequence_ReturnsMaybeNot()
+        {
+            var pipe = Pipe.From(new int[0]);
+
+            pipe
+                .First()
+                .Should()
+                .Be(default(Maybe<int>));
+        }
+
+        [TestMethod]
+        public void Pipe_FindEmptySequence_ReturnsMaybeNot()
+        {
+            var pipe = Pipe.From(new int[0]);
+
+            pipe
+                .Find(i => i > 10)
+                .Should()
+                .Be(default(Maybe<int>));
+        }
+
+        [TestMethod]
+        public void Pipe_FindNonEmptySequenceButNoMatch_ReturnsMaybeNot()
+        {
+            var pipe = Pipe.From(new [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+
+            pipe
+                .Find(i => i == 10)
+                .Should()
+                .Be(default(Maybe<int>));
+        }
+
+        [TestMethod]
+        public void Pipe_FindSingleMatchingElement_ReturnsThatElement()
+        {
+            var pipe = Pipe.From(new [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+
+            pipe
+                .Find(i => i == 4)
+                .Should()
+                .Be(Maybe.From(4));
+        }
+
+        private class Thing {
+            public int Key;
+            public Thing(int key) {
+                Key = key;
+            }
+        }
+
+        [TestMethod]
+        public void Pipe_FindMultipleMatchingElement_ReturnsFirstMatchingElement()
+        {
+            var array = new [] { new Thing(1), new Thing(2), new Thing(3), new Thing(4), new Thing(3), new Thing(2), new Thing(3), new Thing(8), new Thing(9) };
+
+            var pipe = Pipe.From(array);
+
+            pipe
+                .Find(t => t.Key == 3)
+                .Should()
+                .Be(Maybe.From(array[2]));
         }
 
         [TestMethod]

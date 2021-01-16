@@ -11,6 +11,20 @@ namespace Pipes
         public static Pipe<T> From<T>(IEnumerable<T> source) => Pipe<T>.From(source);
     }
 
+    public struct Maybe {
+        public static Maybe<T> From<T>(T value) => new Maybe<T>(value);
+    }
+
+    public struct Maybe<T> {
+        public readonly bool HasValue;
+        public readonly T Value;
+
+        public Maybe(T value) {
+            HasValue = true;
+            Value = value;
+        }
+    }
+
     public class Pipe<T>: IEnumerable<T>, IEnumerator<T>
     {
         protected IEnumerable<T> source;
@@ -99,7 +113,7 @@ namespace Pipes
 
             var count = 0;                
 
-            while(MoveNext()){
+            while (MoveNext()){
                 count++;
             }
 
@@ -108,21 +122,37 @@ namespace Pipes
             return count;                
         }
 
-        public virtual T First() {
-            var result = default(T);
+        public virtual Maybe<T> Find(Func<T,bool> predicate) {
+            while (MoveNext()) {
+                var current = Current;
 
-            if (MoveNext()) {
-                result = Current;
-
-                Reset();
+                if (predicate(current)) {
+                    return new Maybe<T>(current);
+                }
             }
 
-            return result;
+            return default(Maybe<T>);
+        }
+
+        public virtual Maybe<T> First() {
+            if (MoveNext()) {
+                var result = new Maybe<T>(Current);
+
+                Reset();
+
+                return result;
+            }
+
+            return default(Maybe<T>);
         }
 
         public virtual T Only() {
             if (MoveNext()) {
                 var result = Current;
+
+                if (MoveNext()) {
+                    throw new System.InvalidOperationException("multiple elements found");
+                }
 
                 Reset();
 
