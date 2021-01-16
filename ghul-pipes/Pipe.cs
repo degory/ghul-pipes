@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Pipes
 {
@@ -153,44 +154,31 @@ namespace Pipes
 
         public virtual Pipe<T> Sort(Func<T,T,int> compare) => Sort(new FunctionComparer<T>(compare));
 
-        // Deprecated - reserve 'Join' for joining two pipes on a key:
-        public virtual string Join(string separator) {
-            var result = new System.Text.StringBuilder();
+        public virtual StringBuilder AppendTo(StringBuilder into, string separator) {
             var seen_any = false;
 
             while(MoveNext()) {
                 if (seen_any) {
-                    result.Append(separator);
+                    into.Append(separator);
                 }
 
-                result.Append(Current);
+                into.Append(Current);
 
                 seen_any = true;
             }
 
             Reset();
 
-            return result.ToString();
+            return into;
         }
 
-        // Deprecated - reserve 'Join' for joining two pipes on a key:
-        public virtual string Join() => Join(", ");
+        public virtual StringBuilder AppendTo(StringBuilder into) =>
+            AppendTo(into, ", ");
 
         public virtual string ToString(string separator) {
             var result = new System.Text.StringBuilder();
-            var seen_any = false;
 
-            while(MoveNext()) {
-                if (seen_any) {
-                    result.Append(separator);
-                }
-
-                result.Append(Current);
-
-                seen_any = true;
-            }
-
-            Reset();
+            AppendTo(result, separator);
 
             return result.ToString();
         }
