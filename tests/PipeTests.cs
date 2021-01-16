@@ -346,6 +346,60 @@ namespace Tests
                 .Be("2\t1\t4\t3\t6\t5");
         }
 
+                [TestMethod]
+        public void AppendTo_WithNoSeparatorArgument_AppendsStringRepresentationOfAllElementsSeparatedWithACommaAndSpace()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            var result = new System.Text.StringBuilder("XX");
+
+            pipe
+                .AppendTo(result);
+
+            result
+                .ToString()
+                .Should()
+                .Be("XX2, 1, 4, 3, 6, 5");
+        }
+
+        [TestMethod]
+        public void AppendTo_WithSeparatorArgument_AppendsStringRepresentationOfAllElementsSeparatedWithThatSeparator()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            var result = new System.Text.StringBuilder("XX");
+
+            pipe
+                .AppendTo(result, "///");
+
+            result
+                .ToString()
+                .Should()
+                .Be("XX2///1///4///3///6///5");
+        }
+
+        [TestMethod]
+        public void AppendTo_CalledTwice_AppendsStringRepresentationOfAllElementsTwice()
+        {
+            var pipe = Pipe.From(new [] {2, 1, 4, 3, 6, 5});
+
+            var result = new System.Text.StringBuilder("XX");
+
+            pipe
+                .AppendTo(result, "-");
+
+            result.Append("YY");
+
+            pipe
+                .AppendTo(result, "_");
+
+            result
+                .ToString()
+                .Should()
+                .Be("XX2-1-4-3-6-5YY2_1_4_3_6_5");
+        }
+
+
         class ReverseIntComparer: System.Collections.Generic.IComparer<int>
         {
             public int Compare(int x, int y)
