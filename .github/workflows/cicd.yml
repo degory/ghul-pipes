@@ -74,7 +74,7 @@ jobs:
         echo "package version: ${{ steps.pick_version.outputs.package }}"
 
   build:
-    name: Build .NET executable
+    name: Build and publish NuGet package
     runs-on: ubuntu-latest
     container: ghul/devcontainer:dotnet
     timeout-minutes: 10
@@ -83,11 +83,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
                     
+    - name: Run tests
+      run: dotnet test tests
+
     - name: Pack
       run: dotnet pack ghul-pipes -p:Version=${{ needs.version.outputs.package }}
-
-    - name: Test
-      run: dotnet test tests
 
     - name: Upload .NET package artefact
       if: ${{ github.event_name != 'push' }}

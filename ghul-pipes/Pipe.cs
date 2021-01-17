@@ -43,6 +43,20 @@ namespace Pipes
         public Pipe<T> Cat(IEnumerable<T> right) =>
             new CatPipe<T>(GetEnumerator(), right.GetEnumerator());
 
+        public Pipe<T> Reverse() {
+            var list = source as IReadOnlyList<T>;
+
+            if (list != null) {
+                return new ReversePipe<T>(list);
+            }
+
+            var array = CollectArray();
+
+            Array.Reverse(array);
+
+            return Pipe.From(array);
+        }
+
         public IReadOnlyList<T> Collect() => CollectList();
 
         public T[] CollectArray() => CollectList().ToArray();

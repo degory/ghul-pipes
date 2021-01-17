@@ -17,6 +17,8 @@ namespace Tests
             var pipe = Pipe.From(new [] {1, 2, 3, 4, 5});
 
             pipe.Should().BeOfType(typeof(AdaptorPipe<int>));
+
+            "hello".Should().Be("Goodbye");
         }
 
         [TestMethod]
