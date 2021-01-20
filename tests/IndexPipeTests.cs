@@ -33,6 +33,29 @@ namespace Tests
                 .Index()
                 .Should()
                 .Equal(new [] {ivs(0, "3"), ivs(1, "4"), ivs(2, "1"), ivs(3, "5"), ivs(4, "2"), ivs(5, "3"), ivs(6, "1"), ivs(7, "4"), ivs(8, "5")});
+        
+        }
+
+        [TestMethod]
+        public void Index_MultipleElementsPositiveInitialIndex_ReturnsExpectedSequence()
+        {
+            var pipe = Pipe.From(new [] {"3", "4", "1", "5", "2", "3", "1", "4", "5"});
+
+            pipe
+                .Index(3)
+                .Should()
+                .Equal(new [] {ivs(3, "3"), ivs(4, "4"), ivs(5, "1"), ivs(6, "5"), ivs(7, "2"), ivs(8, "3"), ivs(9, "1"), ivs(10, "4"), ivs(11, "5")});
+        }
+
+        [TestMethod]
+        public void Index_MultipleElementsNegativeInitialIndex_ReturnsExpectedSequence()
+        {
+            var pipe = Pipe.From(new [] {"3", "4", "1", "5", "2", "3", "1", "4", "5"});
+
+            pipe
+                .Index(-3)
+                .Should()
+                .Equal(new [] {ivs(-3, "3"), ivs(-2, "4"), ivs(-1, "1"), ivs(0, "5"), ivs(1, "2"), ivs(2, "3"), ivs(3, "1"), ivs(4, "4"), ivs(5, "5")});
         }
 
         [TestMethod]

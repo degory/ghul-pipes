@@ -26,11 +26,10 @@ namespace Pipes
     {
         private int index;
         private IEnumerator<T> enumerator;
-
-        public IndexPipe(IEnumerator<T> enumerator) : base(null){
+        public IndexPipe(IEnumerator<T> enumerator, int index) : base(null){
             this.enumerator = enumerator;         
 
-            index = -1;   
+            this.index = index - 1;   
         }
 
         public override IndexedValue<T> Current { get => new IndexedValue<T>(index,enumerator.Current); }
