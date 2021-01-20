@@ -8,7 +8,13 @@ namespace Pipes
     // and so only pay cost of try/finally handler if genuinely needed. For now, in practice, none
     // of the enumerators we want to use actually have any non-managed state that needs to be disposed
     public class Pipe {
-        public static Pipe<T> From<T>(IEnumerable<T> source) => Pipe<T>.From(source);
+        public static Pipe<T> From<T>(IEnumerable<T> source) {
+            if (source != null) {
+                return Pipe<T>.From(source);
+            } else {
+                return null;
+            }
+        }
     }
 
     public struct Maybe {
@@ -59,7 +65,10 @@ namespace Pipes
             new CatPipe<T>(GetEnumerator(), right.GetEnumerator());
 
         public Pipe<IndexedValue<T>> Index() =>
-            new IndexPipe<T>(GetEnumerator());
+            new IndexPipe<T>(GetEnumerator(), 0);
+
+        public Pipe<IndexedValue<T>> Index(int index) =>
+            new IndexPipe<T>(GetEnumerator(), index);
 
         public Pipe<(T,T2)> Zip<T2>(IEnumerable<T2> other) =>
             new ZipPipe<T,T2>(GetEnumerator(), other.GetEnumerator());
