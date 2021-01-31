@@ -171,6 +171,18 @@ namespace Pipes
             throw new System.InvalidOperationException("no element found");
         }
 
+        public virtual bool Has(Func<T,bool> predicate) {
+            while(MoveNext()) {
+                if (predicate(Current)) {
+                    return true;
+                }
+            }
+
+            Reset();
+
+            return false;
+        }
+
         public virtual Pipe<T> Sort() {
             var list = CollectList();
 
