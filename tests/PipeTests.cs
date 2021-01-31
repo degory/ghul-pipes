@@ -100,6 +100,48 @@ namespace Tests
         }
 
         [TestMethod]
+        public void Pipe_HasNoElements_ReturnsFalse() {
+            var pipe = Pipe.From(new int[0]);
+
+            pipe
+                .Has(i => i == 4)
+                .Should()
+                .Be(false);
+
+        }
+
+        [TestMethod]
+        public void Pipe_HasSomeElementsButNoneMatch_ReturnsFalse() {
+            var pipe = Pipe.From(new [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+
+            pipe
+                .Has(i => i == 99)
+                .Should()
+                .Be(false);
+
+        }
+
+        [TestMethod]
+        public void Pipe_HasSomeElementsOneMatches_ReturnsTrue() {
+            var pipe = Pipe.From(new [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+
+            pipe
+                .Has(i => i == 4)
+                .Should()
+                .Be(true);
+        }
+
+        [TestMethod]
+        public void Pipe_HasSomeElementsMultipleMatches_ReturnsTrue() {
+            var pipe = Pipe.From(new [] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+
+            pipe
+                .Has(i => i > 4)
+                .Should()
+                .Be(true);
+        }
+
+        [TestMethod]
         public void Pipe_SkipThenFilter_ReturnsFilteredTailSequence()
         {
             var pipe = Pipe.From(new [] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10});
