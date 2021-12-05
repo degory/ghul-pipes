@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "ghul-pipes"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directory: "tests"
+    schedule:
+      interval: "daily"
