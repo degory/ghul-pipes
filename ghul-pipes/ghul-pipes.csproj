@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Pipes</RootNamespace>
 
     <Title>ghūl pipes library</Title>
@@ -8,7 +8,7 @@
     <PackageId>ghul.pipes</PackageId>
     <Authors>degory</Authors>
     <Company>ghul.io</Company>
-    <Version>0.0.11</Version>
+    <Version>0.0.12</Version>
 
     <PackageOutputPath>./nupkg</PackageOutputPath>  
     <RepositoryUrl>https://github.com/degory/ghul-pipes</RepositoryUrl>
