@@ -100,6 +100,7 @@ jobs:
         path: ghul-pipes/nupkg
 
     - name: Publish package to GitHub
+      if: ${{ github.actor != 'dependabot[bot]' }}
       run: dotnet nuget push ./ghul-pipes/nupkg/*.nupkg -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/degory/index.json --skip-duplicate --no-symbols true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
