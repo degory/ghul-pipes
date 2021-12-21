@@ -1,6 +1,6 @@
 # CI/CD pipeline. 
 
-name: CI/CD
+name: CI
 
 on:
   workflow_dispatch:
