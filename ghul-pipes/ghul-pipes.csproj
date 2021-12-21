@@ -5,13 +5,31 @@
 
     <Title>ghūl pipes library</Title>
     <PackageDescription>ghūl compiler pipes library</PackageDescription>
+
+    <PackageOutputPath>./nupkg</PackageOutputPath>  
+
     <PackageId>ghul.pipes</PackageId>
     <Authors>degory</Authors>
     <Company>ghul.io</Company>
-    <Version>0.0.12</Version>
+    <Version>0.0.13-alpha.1</Version>
 
-    <PackageOutputPath>./nupkg</PackageOutputPath>  
-    <RepositoryUrl>https://github.com/degory/ghul-pipes</RepositoryUrl>
     <DebugType>None</DebugType>    
+
+    <Authors>degory</Authors>
+    <Description>ghūl compiler pipes library</Description>
+    <PackageTags>ghul;ghūl;pipes</PackageTags>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <PackageProjectUrl>https://github.com/degory/ghul-pipes</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/degory/ghul-pipes.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryBranch>main</RepositoryBranch>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>    
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="\"/>  
+    <None Include="LICENSE*" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>
