@@ -7,4 +7,4 @@
 [![Issues](https://img.shields.io/github/issues/degory/ghul-pipes)](https://github.com/degory/ghul-pipes/issues) 
 [![License](https://img.shields.io/github/license/degory/ghul-pipes)](https://github.com/degory/ghul-pipes/blob/main/LICENSE)
 
-Provides implementations of the | pipe operator and filter, map and reduce functions for the [ghūl programming language](https://ghul.io)]
+Provides implementations of the pipe operator and filter, map and reduce functions for the [ghūl programming language](https://ghul.io)
