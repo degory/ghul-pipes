@@ -35,7 +35,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
   build:
-    name: Build .NET executable
+    name: Build, test, and publish package
     runs-on: ubuntu-latest
     container: ghul/devcontainer:dotnet
     timeout-minutes: 10
@@ -51,7 +51,6 @@ jobs:
       run: dotnet test tests
 
     - name: Upload .NET package artefact
-      if: ${{ github.event_name != 'push' }}
       uses: actions/upload-artifact@v2
       with:
         name: package
