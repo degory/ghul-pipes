@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Pipes</RootNamespace>
 
     <Title>ghūl pipes library</Title>
@@ -10,7 +10,7 @@
 
     <PackageId>ghul.pipes</PackageId>
     <Authors>degory</Authors>
-    <Company>ghul.io</Company>
+    <Company>ghul.dev</Company>
 
     <DebugType>None</DebugType>    
 
