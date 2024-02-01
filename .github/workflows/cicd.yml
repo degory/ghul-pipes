@@ -44,7 +44,7 @@ jobs:
   build:
     name: Build, test, and publish package
     runs-on: ubuntu-latest
-    container: ghul/devcontainer:dotnet
+    container: mcr.microsoft.com/dotnet/sdk:8.0
     timeout-minutes: 10
     needs: [version]
 
