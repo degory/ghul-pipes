@@ -1,5 +1,29 @@
-**/bin/*
-**/obj/*
-**/nupkg/*
-tests/TestResults/
-output.txt
+# project specific
+
+.build.rsp
+
+obj/
+bin/
+nupkg/
+publish/*
+!publish/.git-keep
+
+**/.assemblies.json
+**/binary
+**/*.mdb
+**/out.il
+**/*.runtimeconfig.json
+**/mono_crash.*.*
+**/out.txt
+**/output.txt
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+
+# Executables
+*.exe
+*.out
+
+# Emacs backups
+*~
+\#*\#

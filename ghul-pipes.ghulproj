@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
     <RootNamespace>Pipes</RootNamespace>
 
     <Title>ghūl pipes library</Title>
@@ -30,6 +32,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ghul.targets" />
+    <PackageReference Include="ghul.runtime" />
+
+    <GhulSources Include="src/**/*.ghul" />
+
     <None Include="../README.md" Pack="true" PackagePath="\"/>  
     <None Include="LICENSE*" Pack="true" PackagePath="\" />
 
