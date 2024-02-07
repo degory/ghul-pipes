@@ -17,6 +17,8 @@ namespace Tests is
 
     empty[T]() -> T[] => System.Array.empty`[T]();
 
+    ivs[T](index: int, value: T) -> INDEXED_VALUE[T] => new INDEXED_VALUE[T](index, value);
+
     assert_are_equal[T](expected: Iterable[T], actual: Pipe[T]) is
         let expected_elements = new LIST[T]();
         let actual_elements = new LIST[T]();
@@ -26,7 +28,7 @@ namespace Tests is
 
         CollectionAssert.are_equal(expected_elements, actual_elements);
     si
-    
+        
     class AdaptorPipeShould is
         @test()
 

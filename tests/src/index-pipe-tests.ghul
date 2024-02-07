@@ -1,0 +1,95 @@
+
+namespace Tests is
+
+    use Collections;
+    use NSubstitute;
+
+    use NSubstitute.SubstituteExtensions.returns;
+    use NSubstitute.SubstituteExtensions.received;
+
+    use Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    use Ghul.Pipes;
+
+    class IndexPipeShould is
+        @test()
+
+        _is_log_cleared: bool static;
+
+        init() is
+            if !_is_log_cleared then
+                IO.File.create("/tmp/ghul-pipes.txt").close();
+                _is_log_cleared = true;
+            fi
+
+            debug("AdaptorPipeShould.init()");
+        si
+
+        Index_EmptyArray_ReturnsEmptySequence() is
+            @test()
+
+            let pipe = 
+                Ghul.Pipes.Pipe`[int]
+                    .from(empty`[int]());
+
+            let result = 
+                pipe
+                    .index();
+
+            assert_are_equal(empty`[INDEXED_VALUE[int]](), result);
+        si
+
+        Index_MultipleElements_ReturnsExpectedSequence() is
+            @test()
+
+            let pipe = 
+                Ghul.Pipes.Pipe`[string]
+                    .from(["3", "4", "1", "5", "2", "3", "1", "4", "5"]);
+
+            let result = 
+                pipe
+                    .index();
+
+            assert_are_equal([ivs(0, "3"), ivs(1, "4"), ivs(2, "1"), ivs(3, "5"), ivs(4, "2"), ivs(5, "3"), ivs(6, "1"), ivs(7, "4"), ivs(8, "5")], result);
+        si
+
+        Index_MultipleElementsPositiveInitialIndex_ReturnsExpectedSequence() is
+            @test()
+
+            let pipe = 
+                Ghul.Pipes.Pipe`[string]
+                    .from(["3", "4", "1", "5", "2", "3", "1", "4", "5"]);
+
+            let result = 
+                pipe
+                    .index(3);
+
+            assert_are_equal([ivs(3, "3"), ivs(4, "4"), ivs(5, "1"), ivs(6, "5"), ivs(7, "2"), ivs(8, "3"), ivs(9, "1"), ivs(10, "4"), ivs(11, "5")], result);
+        si
+
+        Index_MultipleElementsNegativeInitialIndex_ReturnsExpectedSequence() is
+            @test()
+
+            let pipe = 
+                Ghul.Pipes.Pipe`[string]
+                    .from(["3", "4", "1", "5", "2", "3", "1", "4", "5"]);
+
+            let result = 
+                pipe
+                    .index(-3);
+
+            assert_are_equal([ivs(-3, "3"), ivs(-2, "4"), ivs(-1, "1"), ivs(0, "5"), ivs(1, "2"), ivs(2, "3"), ivs(3, "1"), ivs(4, "4"), ivs(5, "5")], result);
+        si
+
+        IndexedValue_ToString_ReturnsIndexAndValueInParentheses() is
+            @test()
+
+            let indexedValue = ivs(1234, "ABCD");
+
+            Assert.are_equal("(1234,ABCD)", indexedValue.to_string());
+        si        
+    si
+si
+
+
+
