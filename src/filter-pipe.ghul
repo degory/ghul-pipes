@@ -4,8 +4,8 @@ namespace Ghul.Pipes is
     class FilterPipe[T]: FilterPipeBase[T] is
         _predicate: T -> bool;
 
-        init(enumerator: Iterator[T], predicate: T -> bool) is
-            super.init(enumerator);
+        init(iterator: Iterator[T], predicate: T -> bool) is
+            super.init(iterator);
 
             _predicate = predicate;
         si

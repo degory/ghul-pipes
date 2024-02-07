@@ -28,7 +28,7 @@ namespace Ghul.Pipes is
             return false;  
         si
 
-        have_moved();
+        have_moved() is si
 
         should_continue() -> bool => true;
 
