@@ -17,6 +17,16 @@ namespace Pipes
         }
     }
 
+    public class Factory {
+        public static Pipe<T> From<T>(IEnumerable<T> source) {
+            if (source != null) {
+                return Pipe<T>.From(source);
+            } else {
+                return null;
+            }
+        }
+    }
+
     public struct Maybe {
         public static Maybe<T> From<T>(T value) => new Maybe<T>(value);
     }
