@@ -52,7 +52,7 @@ jobs:
     - uses: actions/checkout@v3
                     
     - name: Pack
-      run: dotnet pack ghul-pipes -p:Version=${{ needs.version.outputs.package }}
+      run: dotnet pack -p:Version=${{ needs.version.outputs.package }}
 
     - name: Test
       run: dotnet test tests
@@ -61,17 +61,17 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: package
-        path: ghul-pipes/nupkg
+        path: nupkg
 
     - name: Publish package to GitHub
       if: ${{ github.actor != 'dependabot[bot]' }}
-      run: dotnet nuget push ./ghul-pipes/nupkg/*.nupkg -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/degory/index.json --skip-duplicate --no-symbols
+      run: dotnet nuget push ./nupkg/*.nupkg -k ${GITHUB_TOKEN} -s https://nuget.pkg.github.com/degory/index.json --skip-duplicate --no-symbols
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish package to NuGet
       if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
-      run: dotnet nuget push ./ghul-pipes/nupkg/*.nupkg -k ${NUGET_TOKEN} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols
+      run: dotnet nuget push ./nupkg/*.nupkg -k ${NUGET_TOKEN} -s https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols
       env:
         NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
 
