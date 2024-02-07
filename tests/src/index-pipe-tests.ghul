@@ -49,7 +49,7 @@ namespace Tests is
                 pipe
                     .index();
 
-            assert_are_equal([ivs(0, "3"), ivs(1, "4"), ivs(2, "1"), ivs(3, "5"), ivs(4, "2"), ivs(5, "3"), ivs(6, "1"), ivs(7, "4"), ivs(8, "5")], result);
+            assert_are_equal([iv(0, "3"), iv(1, "4"), iv(2, "1"), iv(3, "5"), iv(4, "2"), iv(5, "3"), iv(6, "1"), iv(7, "4"), iv(8, "5")], result);
         si
 
         Index_MultipleElementsPositiveInitialIndex_ReturnsExpectedSequence() is
@@ -63,7 +63,7 @@ namespace Tests is
                 pipe
                     .index(3);
 
-            assert_are_equal([ivs(3, "3"), ivs(4, "4"), ivs(5, "1"), ivs(6, "5"), ivs(7, "2"), ivs(8, "3"), ivs(9, "1"), ivs(10, "4"), ivs(11, "5")], result);
+            assert_are_equal([iv(3, "3"), iv(4, "4"), iv(5, "1"), iv(6, "5"), iv(7, "2"), iv(8, "3"), iv(9, "1"), iv(10, "4"), iv(11, "5")], result);
         si
 
         Index_MultipleElementsNegativeInitialIndex_ReturnsExpectedSequence() is
@@ -77,13 +77,13 @@ namespace Tests is
                 pipe
                     .index(-3);
 
-            assert_are_equal([ivs(-3, "3"), ivs(-2, "4"), ivs(-1, "1"), ivs(0, "5"), ivs(1, "2"), ivs(2, "3"), ivs(3, "1"), ivs(4, "4"), ivs(5, "5")], result);
+            assert_are_equal([iv(-3, "3"), iv(-2, "4"), iv(-1, "1"), iv(0, "5"), iv(1, "2"), iv(2, "3"), iv(3, "1"), iv(4, "4"), iv(5, "5")], result);
         si
 
         IndexedValue_ToString_ReturnsIndexAndValueInParentheses() is
             @test()
 
-            let indexedValue = ivs(1234, "ABCD");
+            let indexedValue = iv(1234, "ABCD");
 
             Assert.are_equal("(1234,ABCD)", indexedValue.to_string());
         si        

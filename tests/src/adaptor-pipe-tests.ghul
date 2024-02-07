@@ -17,7 +17,7 @@ namespace Tests is
 
     empty[T]() -> T[] => System.Array.empty`[T]();
 
-    ivs[T](index: int, value: T) -> INDEXED_VALUE[T] => new INDEXED_VALUE[T](index, value);
+    iv[T](index: int, value: T) -> INDEXED_VALUE[T] => new INDEXED_VALUE[T](index, value);
 
     assert_are_equal[T](expected: Iterable[T], actual: Pipe[T]) is
         let expected_elements = new LIST[T]();
